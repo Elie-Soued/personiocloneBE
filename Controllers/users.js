@@ -13,33 +13,25 @@ const checkIfUserExists = async (req) => {
 
 module.exports = {
     register: async (req, res) => {
-        const { username, password } = req.body;
-        const user = await checkIfUserExists(req);
+        const user = req.body;
+        let userFlat = {};
 
-        if (user) {
-            res.json({
-                code: 409,
-                message: 'Account exists already',
-            });
-            return;
-        }
+        Object.values(user).forEach((section) => {
+            userFlat = { ...userFlat, ...section };
+        });
+
+        const columns = Object.keys(userFlat);
+        const data = Object.values(userFlat);
 
         try {
-            const hashedPassword = await bcrypt.hash(password, 10);
-            console.log('hashedPassword :>> ', hashedPassword);
-            const queryString = 'INSERT INTO "users" (username, password) VALUES ($1,$2);';
-            const dbResponse = await pool.query(queryString, [username, hashedPassword]);
+            const placeholders = data.map((_, i) => `$${i + 1}`).join(', ');
+            const queryString = `INSERT INTO "users" (${columns.join(', ')}) VALUES (${placeholders});`;
+            const result = await pool.query(queryString, data);
 
-            res.json({
-                code: 200,
-                message: 'inserted user correctly',
-                data: dbResponse.rows[0],
-            });
+            res.status(201).json(result.rows[0]);
         } catch (e) {
-            res.status(500).json({
-                code: 500,
-                message: 'Error trying to insert a new user',
-            });
+            console.log('e :>> ', e);
+            res.status(500).json({ error: 'Error registering user' });
         }
     },
 
