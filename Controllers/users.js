@@ -67,4 +67,22 @@ module.exports = {
       res.status(500).send();
     }
   },
+
+  authenticateToken: async (req, res, next) => {
+    const token = req.headers["authorization"];
+    if (!token) return res.status(401);
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+      if (err) {
+        return res.status(403);
+      }
+      req.user = user;
+      next();
+    });
+  },
+
+  getUser: async (req, res) => {
+    const { id } = req.user;
+    const user = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+    res.json(user.rows[0]);
+  },
 };
