@@ -4,10 +4,10 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const checkIfUserExists = async (req) => {
-  const { username } = req.body;
+  const { user_name } = req.body;
   const users = await pool.query("SELECT * FROM users");
   const result = users.rows;
-  const user = result.find((user) => user.username === username);
+  const user = result.find((user) => user.user_name === user_name);
   return user;
 };
 
@@ -83,6 +83,95 @@ module.exports = {
   getUser: async (req, res) => {
     const { id } = req.user;
     const user = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
-    res.json(user.rows[0]);
+    res.json(formatResponse(employeeProfileBlank, user.rows[0]));
+  },
+};
+
+const formatResponse = (obj, response) => {
+  const result = {}; // Annotate result as any
+  for (const key in obj) {
+    if (typeof obj[key] === "object") {
+      result[key] = formatResponse(obj[key], response);
+    } else {
+      result[key] = response[key];
+    }
+  }
+  return result;
+};
+
+const employeeProfileBlank = {
+  public: {
+    first_name: "",
+    last_name: "",
+    user_name: "",
+    password: "",
+    gender: "",
+    email: "",
+    company_phone_number: "",
+    office: "",
+    department: "",
+    position: "",
+    team: "",
+    linked_in: "",
+    birthday: "",
+    phone_number: "",
+  },
+
+  hrInformation: {
+    status: "",
+    employment_type: "",
+    occupation_type: "",
+    supervisor: "",
+    hire_date: "",
+    contract_end: "",
+    length_of_probation: "",
+    notice_period: "",
+    weekly_hours: "",
+    cost_center: "",
+    nationality: "",
+    resident_permit_valid_until: "",
+  },
+
+  personalData: {
+    street_and_house_number: "",
+    postal_code: "",
+    city: "",
+    private_email: "",
+    private_phone: "",
+  },
+
+  payrollInformation: {
+    salary_type: "",
+    tax_id: "",
+    social_security_number: "",
+    wage_tax_class: "",
+    children: "",
+    child_allowance: "",
+    marital_status: "",
+    religious_denomination: "",
+    type_of_health_insurance: "",
+    name_of_health_insurance: "",
+    main_or_secondary_occupation: "",
+    wage_tax_allowance: "",
+  },
+
+  bankDetails: {
+    holder_of_bank_account: "",
+    iban: "",
+    bic: "",
+  },
+
+  emergencyContact: {
+    emergency_name: "",
+    emergency_number: "",
+  },
+
+  employeeEquipment: {
+    notebook: "",
+    cell_phone: "",
+  },
+
+  development: {
+    training: "",
   },
 };
