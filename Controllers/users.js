@@ -50,12 +50,18 @@ module.exports = {
       return;
     }
 
+    const { isadmin } = user;
+
     try {
       const passwordIsMatching = password === user.password;
 
       if (passwordIsMatching) {
         const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
-        res.send({ accessToken });
+
+        res.send({
+          accessToken: accessToken,
+          isadmin: isadmin,
+        });
       } else {
         res.json({
           code: 401,
