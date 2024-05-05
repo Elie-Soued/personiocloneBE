@@ -58,6 +58,20 @@ module.exports = {
       if (passwordIsMatching) {
         const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
 
+        // Set CORS headers
+        res.setHeader(
+          "Access-Control-Allow-Origin",
+          "https://www.pilexlaflex.com"
+        );
+        res.setHeader(
+          "Access-Control-Allow-Methods",
+          "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+        );
+        res.setHeader(
+          "Access-Control-Allow-Headers",
+          "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+        );
+
         res.send({
           accessToken: accessToken,
           isadmin: isadmin,
