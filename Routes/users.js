@@ -6,6 +6,6 @@ const { register, login, getUser, authenticateToken } = userControllers;
 
 router.post("/register", register);
 router.post("/login", login);
-router.get("/", authenticateToken, getUser);
+router.get("/", getUser);
 
 module.exports = router;
