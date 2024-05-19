@@ -1,18 +1,14 @@
-const dotenv = require("dotenv");
+import express, { Express, Request, Response } from "express";
+import cors from "cors";
+import usersRoute from "./Routes/users";
+import dotenv from "dotenv";
 dotenv.config();
-const express = require("express");
-const cors = require("cors");
 
 //Constants declarations
 const { PORT } = process.env;
-const app = express();
-const port = PORT;
-
-//Routes imports
-const usersRoute = require("./Routes/users");
+const app: Express = express();
 
 //Use Body Parser to format the body´s reponse
-
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
@@ -20,7 +16,7 @@ app.use(cors());
 //Assigning a route file to a path
 app.use("/users", usersRoute);
 
-app.get("/", (req, res) => res.send("Hello World"));
+app.get("/", (req: Request, res: Response) => res.send("Hello World"));
 
 //Starting a server and make it listen to a specific port
-app.listen(port, () => console.log(`Server running on port${port}`));
+app.listen(PORT, () => console.log(`Server running on port${PORT}`));
