@@ -3,7 +3,7 @@ import { type Request, type Response, type NextFunction } from "express";
 import pool from "../dbconfig";
 import dotenv from "dotenv";
 import { employeeProfileBlank } from "../constants";
-import { EmployeeProfileType } from "../types";
+import { EmployeeProfileType, ObjectType } from "../types";
 import { checkIfUserExists } from "../Utils";
 dotenv.config();
 
@@ -97,31 +97,26 @@ const authenticateToken = async (
   jwt.verify(
     token,
     process.env.ACCESS_TOKEN_SECRET,
-    (err: Error | null, user) => {
+    (err: Error | null, decoder) => {
       if (err) {
         return res.status(403);
       }
 
-      if (typeof user === "object") {
-        req.user = user as EmployeeProfileType;
-        next();
-      } else {
-        return res.status(403);
-      }
+      req.body.user = decoder as EmployeeProfileType;
+      next();
     }
   );
 };
 
 const getUser = async (req: Request, res: Response) => {
-  if (!req.user) return;
-  const { id } = req.user;
+  if (!req.body.user) return;
+  const { id } = req.body.user;
   const user = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
-
   res.json(formatResponse(employeeProfileBlank, user.rows[0]));
 };
 
-const formatResponse = (obj: EmployeeProfileType, response: Response) => {
-  const result = {}; // Annotate result as any
+const formatResponse = (obj: any, response: any) => {
+  const result: ObjectType = {}; // Annotate result as any
   for (const key in obj) {
     if (typeof obj[key] === "object") {
       result[key] = formatResponse(obj[key], response);

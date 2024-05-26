@@ -76,4 +76,8 @@ type EmployeeProfileType = {
   };
 };
 
-export { EmployeeProfileType };
+interface ObjectType {
+  [key: string]: any; // Replace 'any' with the type of the values if known
+}
+
+export { EmployeeProfileType, ObjectType };
