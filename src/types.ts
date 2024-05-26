@@ -130,8 +130,8 @@ type EmployeeProfileUnformatedType = {
   training: string;
 };
 
-interface ObjectType {
+type ObjectType = {
   [key: string]: string | number | object;
-}
+};
 
 export { EmployeeProfileType, ObjectType, EmployeeProfileUnformatedType };
