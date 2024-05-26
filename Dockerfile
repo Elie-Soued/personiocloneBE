@@ -11,7 +11,7 @@ COPY package*.json ./
 RUN npm install
 
 # Install nodemon globally
-RUN npm install -g nodemon
+RUN npm install -g ts-node
 
 # Copy the rest of the application files to the working directory
 COPY . .
@@ -20,5 +20,5 @@ COPY . .
 EXPOSE 5000
 
 # Define the command to run your app
-CMD ["nodemon", "start"]
+CMD ["npx", "ts-node", "src/index.ts"]
 
