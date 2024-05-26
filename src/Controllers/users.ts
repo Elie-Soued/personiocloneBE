@@ -3,8 +3,9 @@ import { type Request, type Response, type NextFunction } from "express";
 import pool from "../dbconfig";
 import dotenv from "dotenv";
 import { employeeProfileBlank } from "../constants";
-import { EmployeeProfileType, ObjectType } from "../types";
-import { checkIfUserExists } from "../Utils";
+import { EmployeeProfileType } from "../types";
+import { checkIfUserExists, formatResponse } from "../Utils";
+
 dotenv.config();
 
 const register = async (req: Request, res: Response) => {
@@ -113,18 +114,6 @@ const getUser = async (req: Request, res: Response) => {
   const { id } = req.body.user;
   const user = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
   res.json(formatResponse(employeeProfileBlank, user.rows[0]));
-};
-
-const formatResponse = (obj: any, response: any) => {
-  const result: ObjectType = {}; // Annotate result as any
-  for (const key in obj) {
-    if (typeof obj[key] === "object") {
-      result[key] = formatResponse(obj[key], response);
-    } else {
-      result[key] = response[key];
-    }
-  }
-  return result;
 };
 
 export { register, login, getUser, authenticateToken };
