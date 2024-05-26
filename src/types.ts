@@ -77,7 +77,7 @@ type EmployeeProfileType = {
 };
 
 interface ObjectType {
-  [key: string]: any; // Replace 'any' with the type of the values if known
+  [key: string]: string | number | object; // Replace 'any' with the type of the values if known
 }
 
 export { EmployeeProfileType, ObjectType };
