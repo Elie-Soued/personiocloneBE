@@ -13,7 +13,7 @@ const uploadObj = multer({ dest: "profilePictures" });
 
 router.post("/register", register);
 router.post("/login", login);
-router.post("/upload", uploadObj.single("profilePictures"), upload);
+router.post("/upload", uploadObj.single("profilePicture"), upload);
 router.get("/", authenticateToken, getUser);
 
 export default router;
