@@ -117,4 +117,26 @@ const getUser = async (req: Request, res: Response) => {
   res.json(formatResponse(employeeProfileBlank, user.rows[0]));
 };
 
-export { register, login, getUser, authenticateToken };
+const upload = async (req: Request, res: Response) => {
+  const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "/profilePictures");
+    },
+    filename: function (req, file, cb) {
+      const name = Date.now() + file.fieldname;
+      cb(null, name);
+    },
+  });
+
+  const uploadFile = multer({ storage: storage }).single("profilePictures");
+
+  uploadFile(req, res, (err) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send("File uploaded");
+    }
+  });
+};
+
+export { register, login, getUser, authenticateToken, upload };
