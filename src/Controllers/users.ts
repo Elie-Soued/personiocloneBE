@@ -120,7 +120,7 @@ const getUser = async (req: Request, res: Response) => {
 const upload = async (req: Request, res: Response) => {
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, "/profilePic");
+      cb(null, "/profilePictures");
     },
     filename: function (req, file, cb) {
       const name = Date.now() + file.fieldname;
@@ -128,7 +128,7 @@ const upload = async (req: Request, res: Response) => {
     },
   });
 
-  const uploadFile = multer({ storage: storage }).single("profilePicture");
+  const uploadFile = multer({ storage: storage }).single("profilePictures");
 
   uploadFile(req, res, (err) => {
     if (err) {
