@@ -9,7 +9,7 @@ import {
 } from "../Controllers/users";
 
 const router = express.Router();
-const uploadObj = multer({ dest: "uploads/" });
+const uploadObj = multer({ dest: "profilePicture" });
 
 router.post("/register", register);
 router.post("/login", login);
