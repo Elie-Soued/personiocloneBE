@@ -120,7 +120,7 @@ const getUser = async (req: Request, res: Response) => {
 const upload = async (req: Request, res: Response) => {
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, "/home/pilex/repos/personioclone/data/profilePictures");
+      cb(null, "/profilePic");
     },
     filename: function (req, file, cb) {
       const name = Date.now() + file.fieldname;
