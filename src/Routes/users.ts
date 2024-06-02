@@ -1,19 +1,19 @@
 import express from "express";
-import multer from "multer";
+import { uploadObj } from "../Utils";
 import {
   register,
   login,
   getUser,
   authenticateToken,
-  upload,
 } from "../Controllers/users";
 
 const router = express.Router();
-const uploadObj = multer({ dest: "profilePictures" });
 
 router.post("/register", register);
 router.post("/login", login);
-router.post("/upload", uploadObj.single("profilePicture"), upload);
+router.post("/upload", uploadObj.single("profilePicture"), (req, res) => {
+  res.json(req.file);
+});
 router.get("/", authenticateToken, getUser);
 
 export default router;
