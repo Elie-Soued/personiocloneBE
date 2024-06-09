@@ -134,9 +134,8 @@ const getProfilePicture = async (req: Request, res: Response) => {
     const profilePicturePath = path.basename(
       profilePicture.rows[0].profilepicture
     );
-    const profilePictureUrl = `https://www.pilexlaflex.com/profilePictures/${profilePicturePath}`;
 
-    res.json({ profilePictureUrl });
+    res.json({ profilePicturePath });
   } catch (error) {
     console.error("Error fetching profile picture:", error);
     res.status(500).json({ error: "Internal server error" });
