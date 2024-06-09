@@ -6,8 +6,6 @@ import multer from "multer";
 import { employeeProfileBlank } from "../constants";
 import { EmployeeProfileType } from "../types";
 import { checkIfUserExists, formatResponse } from "../Utils";
-import path from "path";
-import fs from "fs";
 
 dotenv.config();
 
@@ -139,10 +137,12 @@ const getProfilePicture = async (req: Request, res: Response) => {
 };
 const upload = async (req: Request, res: Response) => {
   if (!req.body.user) return;
+  const basePath = "/home/pilex/repos/personioclone/data/profilePictures";
+  let path;
+  if (req.file) path = `${basePath}/${Date.now()}${req.file.fieldname}`;
   const { id } = req.body.user;
   const query = "UPDATE users SET profilepicture = $1 WHERE id = $2";
-  let values;
-  if (req.file?.path) values = [req.file.path, id];
+  let values = [path, id];
 
   try {
     const result = await pool.query(query, values);
