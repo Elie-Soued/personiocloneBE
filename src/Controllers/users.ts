@@ -6,6 +6,8 @@ import multer from "multer";
 import { employeeProfileBlank } from "../constants";
 import { EmployeeProfileType } from "../types";
 import { checkIfUserExists, formatResponse } from "../Utils";
+import path from "path";
+import fs from "fs";
 
 dotenv.config();
 
@@ -117,26 +119,43 @@ const getUser = async (req: Request, res: Response) => {
   res.json(formatResponse(employeeProfileBlank, user.rows[0]));
 };
 
-const upload = async (req: Request, res: Response) => {
-  const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, "/profilePictures");
-    },
-    filename: function (req, file, cb) {
-      const name = Date.now() + file.fieldname;
-      cb(null, name);
-    },
-  });
-
-  const uploadFile = multer({ storage: storage }).single("profilePictures");
-
-  uploadFile(req, res, (err) => {
-    if (err) {
-      res.send(err);
-    } else {
-      res.send("File uploaded");
+const getProfilePicture = async (req: Request, res: Response) => {
+  try {
+    if (!req.body.user || !req.body.user.id) {
+      return res.status(400).json({ error: "Missing user ID" });
     }
-  });
-};
 
-export { register, login, getUser, authenticateToken, upload };
+    const { id } = req.body.user;
+    const profilePicturePath = await pool.query(
+      "SELECT profilepicture FROM users WHERE id = $1",
+      [id]
+    );
+
+    return res.json(profilePicturePath.rows[0]);
+  } catch (error) {
+    console.error("Error fetching profile picture:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+const upload = async (req: Request, res: Response) => {
+  if (!req.body.user) return;
+  const { id } = req.body.user;
+  const query = "UPDATE users SET profilepicture = $1 WHERE id = $2";
+  let values;
+  if (req.file?.path) values = [req.file.path, id];
+
+  try {
+    const result = await pool.query(query, values);
+    return result;
+  } catch (err) {
+    res.send(err);
+  }
+};
+export {
+  register,
+  login,
+  getUser,
+  authenticateToken,
+  upload,
+  getProfilePicture,
+};
