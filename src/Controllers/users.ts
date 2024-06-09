@@ -6,6 +6,7 @@ import multer from "multer";
 import { employeeProfileBlank } from "../constants";
 import { EmployeeProfileType } from "../types";
 import { checkIfUserExists, formatResponse } from "../Utils";
+import path from "path";
 
 dotenv.config();
 
@@ -130,8 +131,10 @@ const getProfilePicture = async (req: Request, res: Response) => {
       [id]
     );
 
-    const profilePicturePath = profilePicture.rows[0].profilepicture;
-    const profilePictureUrl = `https://www.pilexlaflex.com/profilePictures/${profilePicturePath}`;
+    const profilePicturePath = path.basename(
+      profilePicture.rows[0].profilepicture
+    );
+    const profilePictureUrl = `https://www.pilexlaflex.com/profilePictures${profilePicturePath}`;
 
     res.json({ profilePictureUrl });
   } catch (error) {
