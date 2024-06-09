@@ -124,12 +124,16 @@ const getProfilePicture = async (req: Request, res: Response) => {
     }
 
     const { id } = req.body.user;
-    const profilePicturePath = await pool.query(
+
+    const profilePicture = await pool.query(
       "SELECT profilepicture FROM users WHERE id = $1",
       [id]
     );
 
-    return res.json(profilePicturePath.rows[0]);
+    const profilePicturePath = profilePicture.rows[0].profilepicture;
+    const profilePictureUrl = `https://www.pilexlaflex.com/profilePictures/${profilePicturePath}`;
+
+    res.json({ profilePictureUrl });
   } catch (error) {
     console.error("Error fetching profile picture:", error);
     res.status(500).json({ error: "Internal server error" });
