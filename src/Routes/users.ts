@@ -31,7 +31,6 @@ router.post("/register", register);
 router.post("/login", login);
 router.post(
   "/upload",
-
   uploadObj.single("profilePicture"),
   authenticateToken,
   upload

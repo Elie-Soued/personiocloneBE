@@ -146,7 +146,7 @@ const upload = async (req: Request, res: Response) => {
   if (!req.body.user) return;
   const basePath = "/home/pilex/repos/personioclone/data/profilePictures";
   let path;
-  if (req.file) path = `${basePath}/${Date.now()}${req.file.fieldname}`;
+  if (req.file) path = `${basePath}/${req.file.filename}`;
   const { id } = req.body.user;
   const query = "UPDATE users SET profilepicture = $1 WHERE id = $2";
   let values = [path, id];
