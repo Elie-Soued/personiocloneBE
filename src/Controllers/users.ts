@@ -118,50 +118,33 @@ const getUser = async (req: Request, res: Response) => {
   res.json(formatResponse(employeeProfileBlank, user.rows[0]));
 };
 
-const getProfilePicture = async (req: Request, res: Response) => {
-  try {
-    if (!req.body.user || !req.body.user.id) {
-      return res.status(400).json({ error: "Missing user ID" });
-    }
-
-    const { id } = req.body.user;
-
-    const profilePicture = await pool.query(
-      "SELECT profilepicture FROM users WHERE id = $1",
-      [id]
-    );
-
-    const profilePicturePath = path.basename(
-      profilePicture.rows[0].profilepicture
-    );
-
-    res.json({ profilePicturePath });
-  } catch (error) {
-    console.error("Error fetching profile picture:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
 const upload = async (req: Request, res: Response) => {
-  if (!req.body.user) return;
-  const basePath = "/home/pilex/repos/personioclone/data/profilePictures";
-  let path;
-  if (req.file) path = `${basePath}/${req.file.filename}`;
+  const { user_name } = req.body.user;
   const { id } = req.body.user;
-  const query = "UPDATE users SET profilepicture = $1 WHERE id = $2";
-  let values = [path, id];
 
-  try {
-    const result = await pool.query(query, values);
-    return result;
-  } catch (err) {
-    res.send(err);
-  }
+  // This name format will avoid uploading many profile pictures for the same user
+  const name = `${user_name}_${id}.jpg`;
+
+  // Set the path of the directory in the Docker container
+  const directory = path.resolve(__dirname, "../../profilePictures");
+
+  // Multer configuration (Defining name and path of the uploaded picture)
+  const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, directory);
+    },
+    filename: function (req, file, cb) {
+      cb(null, name);
+    },
+  });
+
+  const uploadObj = multer({ storage }).single("profilePicture");
+
+  uploadObj(req, res, (err) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.status(200).json({ message: "File uploaded successfully" });
+  });
 };
-export {
-  register,
-  login,
-  getUser,
-  authenticateToken,
-  upload,
-  getProfilePicture,
-};
+export { register, login, getUser, authenticateToken, upload };
