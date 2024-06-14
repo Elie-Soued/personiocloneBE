@@ -120,10 +120,9 @@ const getUser = async (req: Request, res: Response) => {
 
 const upload = async (req: Request, res: Response) => {
   const { user_name } = req.body.user;
-  const { id } = req.body.user;
 
   // This name format will avoid uploading many profile pictures for the same user
-  const name = `${user_name}_${id}.jpg`;
+  const name = `${user_name}.jpg`;
 
   // Set the path of the directory in the Docker container
   const directory = path.resolve(__dirname, "../../profilePictures");
